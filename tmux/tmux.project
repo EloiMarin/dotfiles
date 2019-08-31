@@ -15,6 +15,11 @@ PROJECT=${PROJECT_NAME}${SUBPROJECT}
 ## Build full project path
 PROJECT_PATH=${BASE_PATH}/${PROJECT}/
 
+if [ ! -d "$PROJECT_PATH" ]; then
+  echo "Error: $PROJECT_PATH does not exist"
+  exit 1
+fi
+
 tmux -2 new-session -d -c $PROJECT_PATH -s $PROJECT
 tmux rename-window -t $PROJECT:0 vim
 tmux new-window -t $PROJECT -a -c $PROJECT_PATH -n tests
