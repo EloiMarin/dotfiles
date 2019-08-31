@@ -44,7 +44,9 @@ set wildignore+=node_modules/*
 
 set tabpagemax=100
 
-call togglebg#map("<F5>")
+if exists("togglebg")
+  call togglebg#map("<F5>")
+endif
 
 if executable("ag")
   let g:ackprg = "ag --vimgrep"
