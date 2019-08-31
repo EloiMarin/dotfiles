@@ -1,0 +1,89 @@
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin()
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " PlugInstall and PlugUpdate will clone fzf in ~/.fzf and run install script
+Plug 'junegunn/fzf.vim'
+Plug 'https://github.com/altercation/vim-colors-solarized.git'
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
+Plug 'https://github.com/mileszs/ack.vim'
+Plug 'https://github.com/w0rp/ale'
+Plug 'https://github.com/SirVer/ultisnips'
+Plug 'https://github.com/flowtype/vim-flow'
+Plug 'https://github.com/tpope/vim-sensible'
+Plug 'https://github.com/honza/vim-snippets'
+Plug 'airblade/vim-gitgutter'
+Plug 'https://github.com/lepture/vim-velocity'
+Plug 'git://github.com/digitaltoad/vim-pug.git'
+Plug 'dNitro/vim-pug-complete', { 'for': ['jade', 'pug'] }
+Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+" Plug 'https://github.com/wakatime/vim-wakatime'
+call plug#end()
+
+" execute pathogen#infect()
+
+let mapleader = ','
+
+set nocompatible
+
+set relativenumber
+set number
+
+set expandtab
+set shiftwidth=2
+set softtabstop=2
+
+set background=dark
+colorscheme solarized
+
+set wildignore+=node_modules/*
+
+set tabpagemax=100
+
+call togglebg#map("<F5>")
+
+if executable("ag")
+  let g:ackprg = "ag --vimgrep"
+endif
+
+"" ALE
+let g:ale_lint_on_text_changed = 'normal'
+let g:ale_lint_on_insert_leave = 1
+
+"" Flow
+let g:flow#showquickfix = 0
+
+"" FZF
+let $FZF_DEFAULT_COMMAND = 'ag -g ""'
+nmap <LEADER>b :Buffers<CR>
+nmap <LEADER>f :Files<CR>
+nmap <LEADER>s :Ag! <C-R><C-W><CR>
+
+"" Unit tests
+nnoremap <LEADER>t :up<CR>:!yarn test %:t:r<CR>
+
+"" vim-velocity
+au BufNewFile,BufRead *.vtl,*.vm,*.html,*.htm,*.shtml,*.stm set ft=velocity
+
+"" Ultisnips
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<tab>"
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+
+let g:wakatime_PythonBinary = '/usr/local/bin/python3'
+
+"" Prettier
+let g:prettier#autoformat = 0
+let g:prettier#exec_cmd_async = 1
+let g:prettier#config#bracket_spacing = 'true'
+let g:prettier#config#trailing_comma = 'all'
+let g:prettier#config#single_quote = 'true'
+let g:prettier#config#print_width = 120
+autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.yaml,*.html PrettierAsync
+
+set updatetime=500
