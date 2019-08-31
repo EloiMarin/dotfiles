@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+BASE_PATH=/opt # Change accordingly
+
+## Get project name from the script file name after the dot
+PROJECT_NAME=`echo basename "$0" | rev | cut -d. -f1 | rev`
+
+## Append subproject name using the first script parameter
+if [ -z $1 ]
+  then SUBPROJECT=""
+  else SUBPROJECT="-$1"
+fi
+PROJECT=${PROJECT_NAME}${SUBPROJECT}
+
+## Build full project path
+PROJECT_PATH=${BASE_PATH}/${PROJECT}/
+
+tmux -2 new-session -d -c $PROJECT_PATH -s $PROJECT
+tmux rename-window -t $PROJECT:0 vim
+tmux new-window -t $PROJECT -a -c $PROJECT_PATH -n tests
+tmux new-window -t $PROJECT -a -c $PROJECT_PATH -n shell
+tmux new-window -t $PROJECT -a -c $PROJECT_PATH -n server
+#tmux new-window -t $PROJECT -a -c $PROJECT_PATH -n browser
+
+tmux send-keys -t $PROJECT:vim 'vim' C-m
+tmux send-keys -t $PROJECT:tests 'docker-compose up test' C-m
+tmux send-keys -t $PROJECT:shell 'git status' C-m
+tmux send-keys -t $PROJECT:server 'docker-compose up web' C-m # Change service name accordingly. TODO Rely on local config
+#tmux send-keys -t $PROJECT:browser '/opt/firefox/firefox -P "Test" -private -url http://localhost:3000' C-m
+
+tmux select-window -t $PROJECT:1
+tmux -2 attach -t $PROJECT
